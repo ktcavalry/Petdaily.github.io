@@ -1,0 +1,1977 @@
+<html lang="zh-CN"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物日报 - 爱宠的每一天都值得记录</title>
+  <!-- 引入外部资源 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  
+  <!-- 配置Tailwindwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#FF7A00',
+            secondary: '#3B82F6',
+            neutral: '#F5F5F5',
+            dark: '#333333',
+            light: '#FFFFFF'
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .text-shadow {
+        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .card-hover {
+        transition: all 0.3s ease;
+      }
+      .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+      }
+      .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body class="bg-gray-50 font-sans text-dark">
+  <!-- 导航栏 -->
+  <header id="navbar" class="fixed w-full bg-white/90 backdrop-blur-sm shadow-sm z-50 transition-all duration-300">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="flex items-center space-x-2">
+        <div class="w-10 h-10 rounded-full h-full object-cover">
+      </div>
+      <span class="text-xl font-bold text-primary">宠物日报</span>
+    </a>
+    
+    <!-- 搜索栏 - 桌面端 -->
+    <div class="hidden md:flex relative flex-1 max-w-xl mx-8">
+      <input type="text" placeholder="搜索宠物知识、用户或内容..." class="w-full py-2 pl-10 pr-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+      <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    </div>
+    
+    <!-- 导航链接 -->
+    <nav class="hidden md:flex items-center space-x-6">
+      <a href="#" class="font-medium hover:text-primary transition-colors">首页</a>
+      <a href="#tips" class="font-medium hover:text-primary transition-colors">宠物小知识</a>
+      <a href="#health" class="font-medium hover:text-primary transition-colors">健康指南</a>
+      <a href="#community" class="font-medium hover:text-primary transition-colors">宠物社区</a>
+      <a href="#tracking" class="font-medium hover:text-primary transition-colors">宠物定位</a>
+      <button id="recordBtn" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors flex items-center space-x-1">
+        <i class="fa fa-plus"></i>
+        <span>记录</span>
+      </button>
+    </nav>
+    
+    <!-- 用户头像 -->
+    <div class="relative">
+      <button id="userMenuBtn" class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/20">
+        <img src="https://p3-doubao-search-sign.byteimg.com/labis/63344498683965cdb93d28b313815b42~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=lzs%2F798uDgA88%2BDhqTnapC3RbDw%3D" alt="用户头像" class="w-full h-full object-cover">
+      </button>
+      <!-- 用户菜单 (默认隐藏) -->
+      <div id="userMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden z-50">
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+          <i class="fa fa-user mr-2"></i>个人中心
+        </a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+          <i class="fa fa-book mr-2"></i>我的记录
+        </a>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 transition-colors">
+          <i class="fa fa-cog mr-2"></i>设置
+        </a>
+        <div class="border-t border-gray-100 my-1"></div>
+        <a href="#" class="block px-4 py-2 hover:bg-gray-100 transition-colors text-red-500">
+          <i class="fa fa-sign-out mr-2"></i>退出登录
+        </a>
+      </div>
+    </div>
+    
+    <!-- 移动端菜单按钮 -->
+    <button id="mobileMenuBtn" class="md:hidden text-xl">
+      <i class="fa fa-bars"></i>
+    </button>
+  </div>
+  
+  <!-- 移动端搜索栏 -->
+  <div class="md:hidden px-4 pb-3">
+    <div class="relative">
+      <input type="text" placeholder="搜索..." class="w-full py-2 pl-10 pr-4 rounded-full border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+      <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    </div>
+  </div>
+  
+  <!-- 移动端导航菜单 (默认隐藏) -->
+  <div id="mobileMenu" class="md:hidden bg-white border-t hidden">
+    <div class="container mx-auto px-4 py-3 flex flex-col space-y-3">
+      <a href="#" class="font-medium py-2 hover:text-primary transition-colors">首页</a>
+      <a href="#tips" class="font-medium py-2 hover:text-primary transition-colors">宠物小知识</a>
+      <a href="#health" class="font-medium py-2 hover:text-primary transition-colors">健康指南</a>
+      <a href="#community" class="font-medium py-2 hover:text-primary transition-colors">宠物社区</a>
+      <a href="#tracking" class="font-medium py-2 hover:text-primary transition-colors">宠物定位</a>
+      <button class="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors flex items-center justify-center space-x-1">
+        <i class="fa fa-plus"></i>
+        <span>记录宠物状态</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- 主内容区 -->
+<main class="pt-20">
+  <!-- 英雄区域 -->
+  <section class="relative bg-gradient-to-r from-primary/90 to-primary h-[70vh] min-h-[500px] flex items-center">
+    <div class="absolute inset-0 overflow-hidden opacity-20">
+      <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1977682794642407429~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=8Ycef88dWli6pZuOr4LQhmAewQc%3D" alt="宠物背景" class="w-full h-full object-cover">
+    </div>
+    <div class="container mx-auto px-4 z-10">
+      <div class="max-w-2xl text-white">
+        <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight text-shadow mb-4">
+          记录爱宠的<br>每一个可爱瞬间
+        </h1>
+        <p class="text-[clamp(1rem,2vw,1.25rem)] mb-8 text-white/90">
+          监测宠物状态、记录每日生活、获取专业指导，让您的宠物健康快乐成长
+        </p>
+        <div class="flex flex-wrap gap-4">
+          <button id="startRecordBtn" class="bg-white text-primary px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors flex items-center space-x-2">
+            <i class="fa fa-camera"></i>
+            <span>开始记录</span>
+          </button>
+          <button class="bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white/10 transition-colors flex items-center space-x-2">
+            <i class="fa fa-play-circle"></i>
+            <span>观看演示</span>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 波浪装饰 -->
+    <div class="absolute bottom-0 left-0 right-0">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" class="w-full h-auto fill-gray-50">
+        <path d="M0,64L60,69.3C120,75,240,85,360,80C480,75,600,53,720,48C840,43,960,53,1080,58.7C1200,64,1320,64,1380,64L1440,64L1440,100L1380,100C1320,100,1200,100,1080,100C960,100,840,100,720,100C600,100,480,100,360,100C240,100,120,100,60,100L0,100Z"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 功能亮点 -->
+  <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-16">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">为什么选择宠物日报？</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">我们提供全方位的宠物关爱服务，让您成为更专业的铲屎官</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <!-- 功能1 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-5">
+            <i class="fa fa-heartbeat text-primary text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">状态监测</h3>
+          <p class="text-gray-600">智能检测宠物状态，及时提醒异常情况，让您随时掌握爱宠健康</p>
+        </div>
+        
+        <!-- 功能2 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-5">
+            <i class="fa fa-video-camera text-primary text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">视频分析</h3>
+          <p class="text-gray-600">拍摄宠物视频，系统智能分析行为状态，提供专业建议</p>
+        </div>
+        
+        <!-- 功能3 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-5">
+            <i class="fa fa-stethoscope text-primary text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">健康指导</h3>
+          <p class="text-gray-600">专业宠物医生提供常见疾病指导方案和就医建议，守护爱宠健康</p>
+        </div>
+        
+        <!-- 功能4 -->
+        <div class="bg-white rounded-xl shadow-sm p-6 card-hover">
+          <div class="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-5">
+            <i class="fa fa-map-marker text-primary text-2xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-3">宠物定位</h3>
+          <p class="text-gray-600">实时追踪宠物位置，设置安全区域，防止宠物走失</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宠物状态记录与分析 -->
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <div class="lg:w-1/2">
+          <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">记录并分析宠物状态</h2>
+          <p class="text-gray-600 mb-6">上传照片或视频，我们的智能系统会分析宠物的行为和状态，生成详细报告，让您更好地了解爱宠的需求。</p>
+          
+          <!-- 分析方式选择 -->
+          <div class="mb-8">
+            <div class="flex border-b border-gray-200">
+              <button class="analysis-tab py-2 px-4 font-medium text-primary border-b-2 border-primary" data-tab="upload">
+                <i class="fa fa-upload mr-2"></i>上传文件
+              </button>
+              <button class="analysis-tab py-2 px-4 font-medium text-gray-500 hover:text-gray-700" data-tab="camera">
+                <i class="fa fa-camera mr-2"></i>拍摄视频
+              </button>
+            </div>
+            
+            <!-- 上传区域 -->
+            <div id="upload-tab" class="analysis-content mt-6">
+              <div id="dropArea" class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-primary transition-colors cursor-pointer">
+                <i class="fa fa-cloud-upload text-4xl text-gray-400 mb-4"></i>
+                <p class="text-gray-500 mb-2">拖拽文件到此处，或点击选择文件</p>
+                <p class="text-gray-400 text-sm">支持图片(jpg, png)和视频(mp4, mov)</p>
+                <input type="file" id="fileInput" class="hidden" accept="image/*,video/*">
+              </div>
+              
+              <div class="mt-6 flex justify-center">
+                <button id="analyzeBtn" class="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed" disabled="">
+                  <i class="fa fa-bar-chart mr-2"></i>开始分析
+                </button>
+              </div>
+            </div>
+            
+            <!-- 拍摄区域 (默认隐藏) -->
+            <div id="camera-tab" class="analysis-content mt-6 hidden">
+              <div class="border rounded-xl overflow-hidden">
+                <video id="cameraPreview" class="w-full h-64 object-cover" autoplay=""></video>
+                <div class="p-4 bg-gray-50 flex justify-center gap-4">
+                  <button id="startRecordVideo" class="bg-primary text-white px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
+                    <i class="fa fa-circle mr-1"></i>开始录制
+                  </button>
+                  <button id="stopRecordVideo" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full hover:bg-gray-300 transition-colors" disabled="">
+                    <i class="fa fa-stop mr-1"></i>停止录制
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 分析结果示例 (默认隐藏) -->
+          <div id="analysisResult" class="hidden bg-gray-50 rounded-xl p-6 border border-gray-100">
+            <h3 class="text-xl font-bold mb-4 flex items-center">
+              <i class="fa fa-check-circle text-green-500 mr-2"></i>分析结果
+            </h3>
+            <div class="space-y-4">
+              <div>
+                <p class="font-medium">宠物状态评估：<span class="text-green-500">良好</span></p>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                  <div class="bg-green-500 h-2.5 rounded-full" style="width: 85%"></div>
+                </div>
+              </div>
+              
+              <div>
+                <p class="font-medium">活跃度：<span class="text-blue-500">较高</span></p>
+                <p class="text-gray-600 text-sm">您的宠物表现出良好的活力水平，动作灵活，反应敏捷</p>
+              </div>
+              
+              <div>
+                <p class="font-medium">情绪状态：<span class="text-yellow-500">愉快</span></p>
+                <p class="text-gray-600 text-sm">从行为来看，您的宠物处于放松愉快的状态，尾巴摆动自然，表情放松</p>
+              </div>
+              
+              <div>
+                <p class="font-medium">健康建议：</p>
+                <p class="text-gray-600 text-sm">宠物目前状态良好，建议保持当前的饮食和运动习惯，定期梳理毛发以保持皮肤健康。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 示例图片 -->
+        <div class="lg:w-1/2">
+          <div class="relative">
+            <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818675597760397338~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=tTLUURO5wuK3QHee3eS0B7aMyNE%3D" alt="宠物状态分析示例" class="w-full h-auto rounded-xl shadow-lg">
+            <div class="absolute -bottom-6 -left-6 bg-white p-4 rounded-xl shadow-lg max-w-xs">
+              <div class="flex items-start">
+                <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                  <i class="fa fa-lightbulb-o text-primary"></i>
+                </div>
+                <div class="ml-3">
+                  <h4 class="font-bold">智能分析</h4>
+                  <p class="text-gray-600 text-sm">通过AI技术识别宠物行为，提供专业评估</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 每日记录与互动 -->
+  <section class="py-16 bg-neutral">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">宠物日常记录</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">记录宠物的每一天，生成可爱的日常报告，与其他铲屎官分享互动</p>
+      </div>
+      
+      <!-- 记录卡片示例 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        <!-- 记录卡片1 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+          <div class="relative">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/c26b69dd03a74d66a4ba4f7e84369f8b~tplv-a9rns2rl98-image.image?rcl=202510260912560E3844E764D5EB04D602&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762045980&amp;x-signature=Xzo0ndKELNpT4EWMop8XLydb5R0%3D" alt="猫咪日常" class="w-full h-48 object-cover">
+            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium">
+              2025-10-24
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <img src="https://p3-doubao-search-sign.byteimg.com/labis/63344498683965cdb93d28b313815b42~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=lzs%2F798uDgA88%2BDhqTnapC3RbDw%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+              <div class="ml-3">
+                <p class="font-medium">铲屎官小李</p>
+                <p class="text-gray-500 text-sm">家有布偶猫</p>
+              </div>
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2">今日份的小调皮😼</h3>
+            <p class="text-gray-600 mb-4">今天早上把卷纸扯了一地，被我抓到现行还装作无辜的样子，真是又气又好笑😂</p>
+            
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex space-x-1">
+                <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">调皮</span>
+                <span class="bg-purple-100 text-purple-800 text-xs px-2 py-1 rounded-full">玩耍</span>
+              </div>
+              <button class="record-interact text-gray-500 hover:text-primary transition-colors" data-id="1">
+                <i class="fa fa-pencil mr-1"></i> 记录同款
+              </button>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div class="flex space-x-4">
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-heart-o mr-1"></i>
+                  <span>24</span>
+                </button>
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-comment-o mr-1"></i>
+                  <span>8</span>
+                </button>
+              </div>
+              <button class="text-primary hover:text-primary/80 transition-colors">
+                阅读更多 <i class="fa fa-angle-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 记录卡片2 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+          <div class="relative">
+            <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818885836409274378~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=1T0ryyjTpzAh1TzJNLNyB8jvuS4%3D" alt="狗狗日常" class="w-full h-48 object-cover">
+            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium">
+              2025-10-24
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818885836409274378~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=1T0ryyjTpzAh1TzJNLNyB8jvuS4%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+              <div class="ml-3">
+                <p class="font-medium">爱狗人士老王</p>
+                <p class="text-gray-500 text-sm">家有金毛</p>
+              </div>
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2">今天学会了新技能🎉</h3>
+            <p class="text-gray-600 mb-4">教了三次就学会了"击掌"，真是个聪明的小家伙！奖励了最喜欢的小饼干🥰</p>
+            
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex space-x-1">
+                <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">训练</span>
+                <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">奖励</span>
+              </div>
+              <button class="record-interact text-gray-500 hover:text-primary transition-colors" data-id="2">
+                <i class="fa fa-pencil mr-1"></i> 记录同款
+              </button>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div class="flex space-x-4">
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-heart-o mr-1"></i>
+                  <span>56</span>
+                </button>
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-comment-o mr-1"></i>
+                  <span>12</span>
+                </button>
+              </div>
+              <button class="text-primary hover:text-primary/80 transition-colors">
+                阅读更多 <i class="fa fa-angle-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 记录卡片3 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover">
+          <div class="relative">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/f3fb79fac9ac42078d28dad34637dcb5~tplv-a9rns2rl98-image.image?rcl=20251026090930D352B700BCAD254AB841&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762045774&amp;x-signature=NROdUYQnyWh5R7iHpa8F%2BxCwPpI%3D" alt="宠物日常" class="w-full h-48 object-cover">
+            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 text-sm font-medium">
+              2025-10-23
+            </div>
+          </div>
+          <div class="p-6">
+            <div class="flex items-center mb-4">
+              <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818675597760397338~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=tTLUURO5wuK3QHee3eS0B7aMyNE%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+              <div class="ml-3">
+                <p class="font-medium">喵星人爱好者</p>
+                <p class="text-gray-500 text-sm">家有橘猫</p>
+              </div>
+            </div>
+            
+            <h3 class="text-xl font-bold mb-2">睡得真香😴</h3>
+            <p class="text-gray-600 mb-4">晒晒太阳睡睡觉，这大概就是猫咪的幸福生活吧～ 看这小肚皮，忍不住想摸摸😊</p>
+            
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex space-x-1">
+                <span class="bg-pink-100 text-pink-800 text-xs px-2 py-1 rounded-full">睡觉</span>
+                <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full">休息</span>
+              </div>
+              <button class="record-interact text-gray-500 hover:text-primary transition-colors" data-id="3">
+                <i class="fa fa-pencil mr-1"></i> 记录同款
+              </button>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+              <div class="flex space-x-4">
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-heart-o mr-1"></i>
+                  <span>38</span>
+                </button>
+                <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                  <i class="fa fa-comment-o mr-1"></i>
+                  <span>5</span>
+                </button>
+              </div>
+              <button class="text-primary hover:text-primary/80 transition-colors">
+                阅读更多 <i class="fa fa-angle-right ml-1"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 加载更多 -->
+      <div class="text-center">
+        <button id="loadMoreBtn" class="bg-white border border-primary text-primary px-6 py-3 rounded-full font-semibold hover:bg-primary/5 transition-colors">
+          加载更多记录 <i class="fa fa-refresh ml-2"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宠物小知识 -->
+  <section id="tips" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">宠物小知识</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">学习专业的宠物护理知识，让您的爱宠更健康快乐</p>
+      </div>
+      
+      <!-- 知识分类标签 -->
+      <div class="flex flex-wrap justify-center gap-3 mb-10">
+        <button class="tip-tag bg-primary text-white px-4 py-2 rounded-full text-sm font-medium">全部</button>
+        <button class="tip-tag bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">猫咪</button>
+        <button class="tip-tag bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">狗狗</button>
+        <button class="tip-tag bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">饮食</button>
+        <button class="tip-tag bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">护理</button>
+        <button class="tip-tag bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-200 transition-colors">训练</button>
+      </div>
+      
+      <!-- 知识卡片 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- 知识卡片1 -->
+        <div class="bg-neutral rounded-xl overflow-hidden shadow-sm card-hover">
+          <img src="https://p11-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1580902866743590915~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=k3bmyzNFtq%2B5834Hb0fr8kzmKWQ%3D" alt="猫咪知识" class="w-full h-48 object-cover">
+          <div class="p-6">
+            <span class="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">猫咪</span>
+            <h3 class="text-xl font-bold mt-3 mb-2">猫咪为什么喜欢蹭东西？</h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">猫咪蹭家具或主人，其实是在标记自己的领地。它们的脸部和身体有特殊的气味腺，通过蹭来留下自己的气味...</p>
+            <a href="#" class="text-primary hover:text-primary/80 transition-colors font-medium flex items-center">
+              阅读更多 <i class="fa fa-long-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 知识卡片2 -->
+        <div class="bg-neutral rounded-xl overflow-hidden shadow-sm card-hover">
+          <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1819012933098274830~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=uWPZhbt7%2FkjjWuWnEf05Ign8amY%3D" alt="狗狗知识" class="w-full h-48 object-cover">
+          <div class="p-6">
+            <span class="bg-amber-100 text-amber-800 text-xs px-2 py-1 rounded-full">狗狗</span>
+            <h3 class="text-xl font-bold mt-3 mb-2">如何正确给狗狗洗澡？</h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">给狗狗洗澡不宜过于频繁，通常每月1-2次即可。使用专用宠物沐浴露，洗澡时注意耳朵和眼睛的保护...</p>
+            <a href="#" class="text-primary hover:text-primary/80 transition-colors font-medium flex items-center">
+              阅读更多 <i class="fa fa-long-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+        
+        <!-- 知识卡片3 -->
+        <div class="bg-neutral rounded-xl overflow-hidden shadow-sm card-hover">
+          <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/2333715577457999872~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776991818&amp;x-signature=smwAcLHwwBd3cLQQ4%2Fnl9vnf83w%3D" alt="宠物饮食" class="w-full h-48 object-cover" style="box-shadow: none; border: none;">
+          <div class="p-6">
+            <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">饮食</span>
+            <h3 class="text-xl font-bold mt-3 mb-2">宠物不能吃的人类食物</h3>
+            <p class="text-gray-600 mb-4 line-clamp-3">巧克力、洋葱、大蒜、葡萄等食物对宠物有毒害作用，可能导致严重健康问题甚至死亡，一定要避免喂食...</p>
+            <a href="#" class="text-primary hover:text-primary/80 transition-colors font-medium flex items-center">
+              阅读更多 <i class="fa fa-long-arrow-right ml-2"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 健康指南 -->
+  <section id="health" class="py-16 bg-gradient-to-b from-neutral to-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">宠物健康指南</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">专业宠物医生提供的常见疾病指导和就医建议</p>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+        <div>
+          <h3 class="text-2xl font-bold mb-6">常见宠物疾病及应对措施</h3>
+          
+          <!-- 疾病列表 -->
+          <div class="space-y-4">
+            <!-- 疾病1 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-lg">猫咪呼吸道感染</h4>
+                  <p class="text-gray-600 mt-1">症状：打喷嚏、流鼻涕、眼睛分泌物增多</p>
+                </div>
+                <button class="disease-details-btn text-primary hover:text-primary/80 transition-colors">
+                  <i class="fa fa-plus-circle"></i>
+                </button>
+              </div>
+              
+              <!-- 详细信息 (默认隐藏) -->
+              <div class="disease-details hidden mt-4 pt-4 border-t border-gray-100">
+                <p class="text-gray-600 mb-3">应对措施：保持环境温暖湿润，提供充足清水，严重时需就医使用抗生素治疗。</p>
+                <p class="text-gray-600">预防方法：定期接种疫苗，保持环境清洁，避免与患病猫咪接触。</p>
+              </div>
+            </div>
+            
+            <!-- 疾病2 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-lg">狗狗腹泻</h4>
+                  <p class="text-gray-600 mt-1">症状：排便次数增多、粪便稀薄、精神不振</p>
+                </div>
+                <button class="disease-details-btn text-primary hover:text-primary/80 transition-colors">
+                  <i class="fa fa-plus-circle"></i>
+                </button>
+              </div>
+              
+              <!-- 详细信息 (默认隐藏) -->
+              <div class="disease-details hidden mt-4 pt-4 border-t border-gray-100">
+                <p class="text-gray-600 mb-3">应对措施：暂时禁食12-24小时，提供口服补液盐防止脱水，如持续2天以上应及时就医。</p>
+                <p class="text-gray-600">预防方法：避免喂食变质食物，不要突然更换狗粮，定期驱虫。</p>
+              </div>
+            </div>
+            
+            <!-- 疾病3 -->
+            <div class="bg-white rounded-xl p-5 shadow-sm">
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="font-bold text-lg">宠物皮肤病</h4>
+                  <p class="text-gray-600 mt-1">症状：皮肤瘙痒、脱毛、红斑、结痂</p>
+                </div>
+                <button class="disease-details-btn text-primary hover:text-primary/80 transition-colors">
+                  <i class="fa fa-plus-circle"></i>
+                </button>
+              </div>
+              
+              <!-- 详细信息 (默认隐藏) -->
+              <div class="disease-details hidden mt-4 pt-4 border-t border-gray-100">
+                <p class="text-gray-600 mb-3">应对措施：及时就医确定病因（过敏、寄生虫或真菌），根据医嘱使用药物治疗，保持环境干燥清洁。</p>
+                <p class="text-gray-600">预防方法：定期驱虫，保持宠物清洁，避免接触患病动物。</p>
+              </div>
+            </div>
+          </div>
+          
+          <button class="mt-6 text-primary hover:text-primary/80 transition-colors font-medium flex items-center">
+            查看更多疾病指南 <i class="fa fa-arrow-right ml-2"></i>
+          </button>
+        </div>
+        
+        <!-- 就医指导 -->
+        <div class="bg-white rounded-xl shadow-lg p-8">
+          <h3 class="text-2xl font-bold mb-6">宠物就医指导</h3>
+          
+          <div class="space-y-6">
+            <div>
+              <h4 class="font-bold flex items-center">
+                <span class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center mr-3 flex-shrink-0">1</span>
+                何时需要立即就医？
+              </h4>
+              <ul class="mt-2 ml-11 space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-red-500 mt-1 mr-2"></i>
+                  <span>持续呕吐或腹泻超过24小时</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-red-500 mt-1 mr-2"></i>
+                  <span>呼吸困难或异常呼吸</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-red-500 mt-1 mr-2"></i>
+                  <span>严重外伤或出血</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-exclamation-circle text-red-500 mt-1 mr-2"></i>
+                  <span>突然倒地、抽搐或意识丧失</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div>
+              <h4 class="font-bold flex items-center">
+                <span class="w-8 h-8 rounded-full bg-yellow-100 text-yellow-500 flex items-center justify-center mr-3 flex-shrink-0">2</span>
+                就医前的准备
+              </h4>
+              <ul class="mt-2 ml-11 space-y-2 text-gray-600">
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                  <span>记录症状出现时间和表现</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                  <span>带上宠物的病历和疫苗记录</span>
+                </li>
+                <li class="flex items-start">
+                  <i class="fa fa-check-circle text-yellow-500 mt-1 mr-2"></i>
+                  <span>准备好宠物常用的物品（如牵引绳、猫包）</span>
+                </li>
+              </ul>
+            </div>
+            
+            <div class="pt-4">
+              <button id="findHospitalBtn" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center">
+                <i class="fa fa-map-marker mr-2"></i>
+                查找附近的宠物医院
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 定位板块 - 附近宠物医院地图 -->
+      <div id="locationSection" class="mb-16 bg-white rounded-xl shadow-lg p-6 hidden">
+        <h3 class="text-2xl font-bold mb-6">附近的宠物医院</h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <!-- 地图区域 -->
+          <div class="lg:col-span-2 bg-gray-100 rounded-xl h-[400px] relative overflow-hidden">
+            <!-- 地图占位图 -->
+            <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1067499458461040686~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=lCEcduJE%2FB9o1SJa2lw2DBIbfvA%3D" alt="地图" class="w-full h-full object-cover">
+            
+            <!-- 定位按钮 -->
+            <button id="locateBtn" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors">
+              <i class="fa fa-crosshairs text-primary"></i>
+            </button>
+            
+            <!-- 地图加载状态 -->
+            <div id="mapLoading" class="absolute inset-0 bg-white/80 flex items-center justify-center hidden">
+              <div class="text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p class="mt-2 text-gray-600">正在加载地图...</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 搜索和医院列表 -->
+          <div>
+            <!-- 搜索框 -->
+            <div class="relative mb-4">
+              <input type="text" id="locationSearch" placeholder="输入地址搜索宠物医院" class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all">
+              <i class="fa fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+            
+            <!-- 距离筛选 -->
+            <div class="mb-6">
+              <label class="block text-gray-700 font-medium mb-2">距离筛选</label>
+              <div class="flex space-x-2">
+                <button class="distance-filter bg-primary text-white px-3 py-1 rounded-full text-sm">1公里内</button>
+                <button class="distance-filter bg-white text-gray-700 px-3 py-1 rounded-full text-sm border border-gray-200 hover:bg-gray-50 transition-colors">3公里内</button>
+                <button class="distance-filter bg-white text-gray-700 px-3 py-1 rounded-full text-sm border border-gray-200 hover:bg-gray-50 transition-colors">5公里内</button>
+              </div>
+            </div>
+            
+            <!-- 医院列表 -->
+            <div class="space-y-4 max-h-[300px] overflow-y-auto pr-2 scrollbar-hide">
+              <!-- 医院1 -->
+              <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer hospital-item">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold">爱心宠物医院</h4>
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">营业中</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-1">综合评分: 4.8 <i class="fa fa-star text-yellow-400"></i></p>
+                <div class="flex items-center text-gray-500 text-sm mt-2">
+                  <i class="fa fa-map-marker mr-1"></i>
+                  <span>距离: 0.8公里</span>
+                </div>
+                <div class="flex items-center text-gray-500 text-sm mt-1">
+                  <i class="fa fa-phone mr-1"></i>
+                  <span>电话: 010-12345678</span>
+                </div>
+              </div>
+              
+              <!-- 医院2 -->
+              <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer hospital-item">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold">康宠动物医院</h4>
+                  <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">营业中</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-1">综合评分: 4.6 <i class="fa fa-star text-yellow-400"></i></p>
+                <div class="flex items-center text-gray-500 text-sm mt-2">
+                  <i class="fa fa-map-marker mr-1"></i>
+                  <span>距离: 1.5公里</span>
+                </div>
+                <div class="flex items-center text-gray-500 text-sm mt-1">
+                  <i class="fa fa-phone mr-1"></i>
+                  <span>电话: 010-87654321</span>
+                </div>
+              </div>
+              
+              <!-- 医院3 -->
+              <div class="bg-white rounded-lg p-4 shadow-sm hover:shadow-md transition-shadow cursor-pointer hospital-item">
+                <div class="flex justify-between items-start">
+                  <h4 class="font-bold">宠爱一生宠物医院</h4>
+                  <span class="bg-gray-100 text-gray-800 text-xs px-2 py-1 rounded-full">已休息</span>
+                </div>
+                <p class="text-gray-600 text-sm mt-1">综合评分: 4.9 <i class="fa fa-star text-yellow-400"></i></p>
+                <div class="flex items-center text-gray-500 text-sm mt-2">
+                  <i class="fa fa-map-marker mr-1"></i>
+                  <span>距离: 2.3公里</span>
+                </div>
+                <div class="flex items-center text-gray-500 text-sm mt-1">
+                  <i class="fa fa-phone mr-1"></i>
+                  <span>电话: 010-13579246</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 宠物医生推荐 -->
+      <div>
+        <h3 class="text-2xl font-bold mb-8 text-center">推荐宠物医生</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- 医生1 -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm card-hover">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/52d5c4f71a2540aa9bf5f174314d3c99~tplv-a9rns2rl98-image.image?rcl=202510260915172631D1C8E8DEF023CBED&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762046121&amp;x-signature=GsGeuFgKIRgM931PyLlFAUObmEE%3D" alt="宠物医生" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-primary/20">
+            <h4 class="font-bold text-lg">张医生</h4>
+            <p class="text-gray-600 mb-2">猫科专家 · 10年经验</p>
+            <div class="flex justify-center text-yellow-400 mb-4">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star-half-o"></i>
+              <span class="text-gray-600 ml-1">4.8</span>
+            </div>
+            <button class="text-primary hover:text-primary/80 transition-colors font-medium">
+              咨询医生
+            </button>
+          </div>
+          
+          <!-- 医生2 -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm card-hover">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/e907aee67dd54789bd5d5e6c25df3abe~tplv-a9rns2rl98-image.image?rcl=202510260914214D2B9527E19F3D373B7F&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762046065&amp;x-signature=yqSWHFT3UX1nj6INSEKppzyTMUY%3D" alt="宠物医生" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-primary/20">
+            <h4 class="font-bold text-lg">李医生</h4>
+            <p class="text-gray-600 mb-2">犬科专家 · 8年经验</p>
+            <div class="flex justify-center text-yellow-400 mb-4">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <span class="text-gray-600 ml-1">5.0</span>
+            </div>
+            <button class="text-primary hover:text-primary/80 transition-colors font-medium">
+              咨询医生
+            </button>
+          </div>
+          
+          <!-- 医生3 -->
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm card-hover">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/0ebf5d3bf6114c9b973d0a38de2c826c~tplv-a9rns2rl98-image.image?rcl=202510260915416E92C8E0A15BDA178B74&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762046145&amp;x-signature=UrvybEPj1MRLHniDAm6qLgSzs9A%3D" alt="宠物医生" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-primary/20">
+            <h4 class="font-bold text-lg">王医生</h4>
+            <p class="text-gray-600 mb-2">全科医生 · 12年经验</p>
+            <div class="flex justify-center text-yellow-400 mb-4">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star-o"></i>
+              <span class="text-gray-600 ml-1">4.2</span>
+            </div>
+            <button class="text-primary hover:text-primary/80 transition-colors font-medium">
+              咨询医生
+            </button>
+          </div>
+          
+          <!-- 医生4 -->
+          <div class="bg-white rounded-xl p-6 text-center shadow shadow-sm card-hover">
+            <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/122c086d2edf498299cd70140a7b2e80~tplv-a9rns2rl98-image.image?rcl=20251026091637F48D9E10C9504251E78B&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762046201&amp;x-signature=MuFZf3c1ERMJdplahVZJahwbeLE%3D" alt="宠物医生" class="w-24 h-24 rounded-full object-cover mx-auto mb-4 border-4 border-primary/20">
+            <h4 class="font-bold text-lg">赵医生</h4>
+            <p class="text-gray-600 mb-2">皮肤科专家 · 7年经验</p>
+            <div class="flex justify-center text-yellow-400 mb-4">
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star"></i>
+              <i class="fa fa-star-half-o"></i>
+              <span class="text-gray-600 ml-1">4.7</span>
+            </div>
+            <button class="text-primary hover:text-primary/80 transition-colors font-medium">
+              咨询医生
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宠物定位功能 -->
+  <section id="tracking" class="py-16 bg-neutral">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">宠物定位追踪</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">实时追踪宠物位置，设置安全区域，防止宠物走失</p>
+      </div>
+      
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mb-16">
+        <!-- 左侧：定位设备介绍 -->
+        <div>
+          <h3 class="text-2xl font-bold mb-6">智能宠物定位器</h3>
+          <p class="text-gray-600 mb-6">
+            我们的智能宠物定位器采用北斗+GPS双模定位技术，精准追踪宠物位置，让您随时掌握爱宠动向。
+            设备防水耐用，续航持久，支持远程开关机和震动寻宠功能。
+          </p>
+          
+          <div class="space-y-6">
+            <!-- 功能点1 -->
+            <div class="flex items-start">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fa fa-map-marker text-primary"></i>
+              </div>
+              <div class="ml-4">
+                <h4 class="font-bold text-lg">实时精准定位</h4>
+                <p class="text-gray-600">采用北斗+GPS双模定位，搭配Wi-Fi定位辅助，确保宠物位置实时可查</p>
+              </div>
+            </div>
+            
+            <!-- 功能点2 -->
+            <div class="flex items-start">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fa fa-shield text-primary"></i>
+              </div>
+              <div class="ml-4">
+                <h4 class="font-bold text-lg">安全区域设置</h4>
+                <p class="text-gray-600">设置100-3000米范围的安全区域，宠物超出范围可触发实时提醒</p>
+              </div>
+            </div>
+            
+            <!-- 功能点3 -->
+            <div class="flex items-start">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fa fa-history text-primary"></i>
+              </div>
+              <div class="ml-4">
+                <h4 class="font-bold text-lg">历史轨迹查询</h4>
+                <p class="text-gray-600">查看宠物24小时内的活动轨迹，了解宠物的活动范围和习惯</p>
+              </div>
+            </div>
+            
+            <!-- 功能点4 -->
+            <div class="flex items-start">
+              <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 mt-1">
+                <i class="fa fa-bell text-primary"></i>
+              </div>
+              <div class="ml-4">
+                <h4 class="font-bold text-lg">异常行为报警</h4>
+                <p class="text-gray-600">当宠物出现异常行为或健康状况时，及时向您发送提醒信息</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mt-8">
+            <button id="buyTrackerBtn" class="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors flex items-center">
+              <i class="fa fa-shopping-cart mr-2"></i>
+              了解更多
+            </button>
+          </div>
+        </div>
+        
+        <!-- 右侧：定位器图片和追踪界面 -->
+        <div class="space-y-8">
+          <!-- 定位器图片 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6">
+              <h4 class="font-bold text-lg mb-4">宠物定位器设备</h4>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                  <img src="https://p3-doubao-search-sign.byteimg.com/labis/6e34a2a914ef83ed0af2351f3891536e~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=j%2BcrkzeJFvpG9zuJXr%2ByRAXuC%2Fc%3D" alt="宠物定位器" class="w-full h-full object-cover">
+                </div>
+                <div class="aspect-square bg-gray-100 rounded-lg overflow-hidden">
+                  <img src="https://p3-doubao-search-sign.byteimg.com/labis/a876e036eb7e7ac86adc3fe2028e6601~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=wnqCShxP%2F1TbfD6V0%2F%2BzZDLwdOc%3D" alt="宠物定位器" class="w-full h-full object-cover">
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 追踪界面预览 -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="p-6">
+              <h4 class="font-bold text-lg mb-4">实时追踪界面</h4>
+              <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden relative">
+                <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/2112766946347188233~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=gVYq4wvEeZXtWZI8I%2BB1j5G9gjM%3D" alt="追踪界面" class="w-full h-full object-cover">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <button id="viewTrackingDemoBtn" class="bg-primary/90 text-white w-16 h-16 rounded-full flex items-center justify-center hover:bg-primary transition-colors">
+                    <i class="fa fa-play text-2xl ml-1"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 定位追踪体验 -->
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <div class="flex flex-col md:flex-row items-center justify-between">
+          <div class="mb-6 md:mb-0">
+            <h3 class="text-2xl font-bold mb-2">立即体验宠物定位服务</h3>
+            <p class="text-gray-600 max-w-lg">立即体验我们的宠物定位服务，实时掌握您的爱宠位置，设置安全区域，再也不用担心宠物走失</p>
+          </div>
+          <div class="flex flex-col sm:flex-row-row gap-4">
+            <button id="tryDemoBtn" class="bg-primary text-white px-6 py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center">
+              <i class="fa fa-map-marker mr-2"></i>
+              立即体验演示
+            </button>
+            <button id="buyNowBtn" class="bg-white border-white-primary border border-primary text-primary px-6 py-3 rounded-full font-semibold hover:bg-primary/5 transition-colors flex items-center justify-center">
+              <i class="fa fa-shopping-cart mr-2"></i>
+              立即购买
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 宠物社区 -->
+  <section id="community" class="py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">宠物社区</h2>
+        <p class="text-gray-600 max-w-2xl mx-auto">与其他铲屎官分享经验，交流心得，为彼此的爱宠点赞</p>
+      </div>
+      
+      <!-- 社区内容 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- 左侧：热门帖子 -->
+        <div class="lg:col-span-2">
+          <div class="bg-neutral rounded-xl p-6 mb-8">
+            <div class="flex justify justify-between items-center mb-6">
+              <h3 class="text-xl font-bold">热门帖子</h3>
+              <div class="flex space-x-2">
+                <button class="community-filter bg-primary text-white px-3 py-1 rounded-full text-sm">最新</button>
+                <button class="communityunity-filter-filter bg bg-white text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-100 transition-colors">热门</button>
+                <button class="community-filter bg-white text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-100 transition-colors">推荐</button>
+              </div>
+            </div>
+            
+            <!-- 帖子列表 -->
+            <div class="space-y-6">
+              <!-- 帖子1 -->
+              <div class="bg-white-white rounded-xl p-5 shadow-sm">
+                <div class="flex items-start">
+                  <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818675597760397338~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=tTLUURO5wuK3QHee3eS0B7aMyNE%3D" alt="用户头像" class="w-12 h-12 rounded-full object-cover">
+                  <div class="ml-4 flex-1">
+                    <div class="flex justify-between">
+                      <div>
+                        <h4 class="font-bold">宠物爱好者小吴</h4>
+                        <p class="text-gray-500 text-sm">2小时前</p>
+                      </div>
+                      <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                    
+                    <div class="mt-3">
+                      <p class="text-gray-700 mb-3">请问大家的狗狗都喜欢什么什么玩具？我家金毛破坏力太强了，买了好几个玩具都被拆了，求推荐耐用的狗狗玩具！</p>
+                      <div class="flex space-x-2 mb-3">
+                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">狗狗玩具</span>
+                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">金毛</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <div class="flex space-x-6">
+                        <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                          <i class="fa fa-thumbs-o-up mr-1"></i>
+                          <span>32</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                          <i class="fa fa-comment-o mr-1"></i>
+                          <span>18</span>
+                        </button>
+                      </div>
+                      <button class="text-gray-500 hover:text-primary transition-colors">
+                        <i class="fa fa-share-alt mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- 帖子2 -->
+              <div class="bg-white rounded-xl p-5 shadow-sm">
+                <div class="flex items-start">
+                  <img src="https://p3-flow-imagex-sign.byteimg.com/tos-cn-i-a9rns2rl98/rc/pc/code_assistant/a528153f470a40a6933c78ddfeaf66c8~tplv-a9rns2rl98-image.image?rcl=20251026084617A69B20014192A12D381F&amp;rk3s=8e244e95&amp;rrcfp=2609e108&amp;x-expires=1762044381&amp;x-signature=8mVUfh%2FUOJWX8XKV9JllL1vJkkg%3D" alt="用户头像" class="w-12 h-12 rounded-full object-cover">
+                  <div class="ml-4 flex-1">
+                    <div class="flex justify-between">
+                      <div>
+                        <h4 class="font-bold">猫咪控</h4>
+                        <p class="text-gray-500 text-sm">昨天 15:30</p>
+                      </div>
+                      <button class="text-gray-400 hover:text-gray-600 transition-colors">
+                        <i class="fa fa-ellipsis-h"></i>
+                      </button>
+                    </div>
+                    
+                    <div class="mt-3">
+                      <p class="text-gray-700 mb-3">分享我家猫咪的可爱瞬间！它最喜欢喜欢在窗台上台上晒太阳，每次次都能摆出各种搞笑姿势😂</p>
+                      <div class="grid grid-cols-3 gap-2 mb-3">
+                        <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-qvj2lq49k0/bca2e767a6704138b2d11d4329a33a08~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776991832&amp;x-signature=sBLZRWvlr3IcDHk4yrPmiONgsu0%3D" alt="猫咪照片" class="w-full h-24 object-cover rounded-lg">
+                        <img src="https://p26-doubao-search-sign.byteimg.com/labis/0dea673a323d362fa26066b498fbd578~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776991832&amp;x-signature=ZS1%2B4tjc%2FgQ%2BeyJ5PBcwyUOcDYk%3D" alt="猫咪照片" class="w-full h-24 object-cover rounded-lg">
+                        <img src="https://p11-doubao-search-sign.byteimg.com/pgc-image/0a6e4050ebac474283925e5f8ed5b2d0~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776991832&amp;x-signature=9UfjQZ1Da7AVzEsMIEEzGRikrgk%3D" alt="猫咪照片" class="w-full h-24 object-cover rounded-lg">
+                      </div>
+                      <div class="flex space-x-2 mb-3">
+                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">猫咪日常</span>
+                        <span class="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">可爱瞬间</span>
+                      </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between pt-3 border-t border-gray-100">
+                      <div class="flex space-x-6">
+                        <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                          <i class="fa fa-thumbs-o-up mr-1"></i>
+                          <span>89</span>
+                        </button>
+                        <button class="flex items-center text-gray-500 hover:text-primary transition-colors">
+                          <i class="fa fa-comment-o mr-1"></i>
+                          <span>34</span>
+                        </button>
+                      </div>
+                      <button class="text-gray-500 hover:text-primary transition-colors">
+                        <i class="fa fa-share-alt mr-1"></i>
+                        <span>分享</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mt-6 text-center">
+              <button class="bg-white border border-gray-200 text-gray-700 px-6 py-2 rounded-full text-sm font-medium hover:bg-gray-50 transition-colors">
+                加载更多帖子
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 右侧：社区信息 -->
+        <div>
+          <!-- 发布帖子 -->
+          <div class="bg-primary rounded-xl p-6 mb-8 text-white">
+            <h3 class="text-xl font-bold mb-4">分享您的宠物故事</h3>
+            <p class="mb-6 opacity-90">发布文字、图片或视频，与其他铲屎官交流互动</p>
+            <button id="createPostBtn" class="w-full bg-white text-primary py-3 rounded-xl font-semibold hover:bg-gray-100 transition-colors">
+              发布新内容
+            </button>
+          </div>
+          
+          <!-- 活跃用户 -->
+          <div class="bg-neutral rounded-xl p-6 mb-8">
+            <h3 class="text-xl font-bold mb-4">活跃铲屎官</h3>
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818675597760397338~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=tTLUURO5wuK3QHee3eS0B7aMyNE%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+                  <div class="ml-3">
+                    <p class="font-medium">爱宠达人</p>
+                    <p class="text-gray-500 text-sm">发布了243篇内容</p>
+                  </div>
+                </div>
+                <button class="text-primary hover:text-primary/80 transition-colors text-sm font-medium">关注</button>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818885836409274378~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=1T0ryyjTpzAh1TzJNLNyB8jvuS4%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+                  <div class="ml-3">
+                    <p class="font-medium">喵汪之家</p>
+                    <p class="text-gray-500 text-sm">发布了187篇内容</p>
+                  </div>
+                </div>
+                <button class="text-primary hover:text-primary/80 transition-colors text-sm font-medium">关注</button>
+              </div>
+              
+              <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                  <img src="https://p11-doubao-search-sign.byteimg.com/labis/63344498683965cdb93d28b313815b42~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=lzs%2F798uDgA88%2BDhqTnapC3RbDw%3D" alt="用户头像" class="w-10 h-10 rounded-full object-cover">
+                  <div class="ml-3">
+                    <p class="font-medium">宠物训练师</p>
+                    <p class="text-gray-500 text-sm">发布了156篇内容</p>
+                  </div>
+                </div>
+                <button class="text-gray-400 cursor-not-allowed text-sm font-medium">已关注</button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 话题标签 -->
+          <div class="bg-neutral rounded-xl p-6">
+            <h3 class="text-xl font-bold mb-4">热门话题</h3>
+            <div class="flex flex-wrap gap-2">
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物饮食</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#训练技巧</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物健康</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#猫咪日常</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#狗狗训练</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物美容</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物旅行</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#新手上路</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物用品</a>
+              <a href="#" class="bg-white px-3 py-1.5 rounded-full text-sm hover:bg-gray-100 transition-colors">#宠物医疗</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 应用介绍视频 -->
+  <section class="py-16 bg-dark text-white">
+    <div class="container mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">了解更多宠物日报功能</h2>
+        <p class="text-gray-300 max-w-2xl mx-auto">观看视频，了解如何更好地使用宠物日报记录和关爱您的宠物</p>
+      </div>
+      
+      <div class="relative max-w-4xl mx-auto rounded-xl overflow-hidden shadow-2xl">
+        <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1977682794642407429~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=8Ycef88dWli6pZuOr4LQhmAewQc%3D" alt="视频封面" class="w-full h-auto">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <button id="playVideoBtn" class="w-20 h-20 rounded-full bg-primary/90 flex items-center justify-center hover:bg-primary transition-colors">
+            <i class="fa fa-play text-white text-2xl ml-1"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 页脚 -->
+<footer class="bg-gray-900 text-gray-300 py-12">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <div>
+        <div class="flex items-center space-x-2 mb-6">
+          <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center">
+            <i class="fa fa-paw text-white text-xl"></i>
+          </div>
+          <span class="text-xl font-bold text-white">宠物日报</span>
+        </div>
+        <p class="mb-6">记录爱宠的每一天，让宠物健康快乐成长</p>
+        <div class="flex space-x-4">
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+            <i class="fa fa-weibo"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+            <i class="fa fa-wechat"></i>
+          </a>
+          <a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+            <i class="fa fa-instagram"></i>
+          </a>
+        </div>
+      </div>
+      
+      <div>
+        <h4 class="text-white font-bold text-lg mb-6">快速链接</h4>
+        <ul class="space-y-3">
+          <li><a href="#" class="hover:text-primary transition-colors">首页</a></li>
+          <li><a href="#tips" class="hover:text-primary transition-colors">宠物小知识</a></li>
+          <li><a href="#health" class="hover:text-primary transition-colors">健康指南</a></li>
+          <li><a href="#community" class="hover:text-primary transition-colors">宠物社区</a></li>
+          <li><a href="#tracking" class="hover:text-primary transition-colors">宠物定位</a></li>
+          <li><a href="#" class="hover:text-primary transition-colors">下载APP</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-white font-bold text-lg mb-6">支持</h4>
+        <ul class="space-y-3">
+          <li><a href="#" class="hover:text-primary transition-colors">帮助中心</a></li>
+          <li><a href="#" class="hover:text-primary transition-colors">联系我们</a></li>
+          <li><a href="#" class="hover:text-primary transition-colors">关于我们</a></li>
+          <li><a href="#" class="hover:text-primary transition-colors">隐私政策</a></li>
+          <li><a href="#" class="hover:text-primary transition-colors">用户协议</a></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-white font-bold text-lg mb-6">联系我们</h4>
+        <ul class="space-y-3">
+          <li class="flex items-start">
+            <i class="fa fa-map-marker mt-1 mr-3 text-primary"></i>
+            <span>北京市朝阳区宠物大厦1001室</span>
+          </li>
+          <li class="flex items-center">
+            <i class="fa fa-phone mr-3 text-primary"></i>
+            <span>400-888-9999</span>
+          </li>
+          <li class="flex items-center">
+            <i class="fa fa-envelope mr-3 text-primary"></i>
+            <span>contact@petdaily.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-gray-800 pt-8 text-center text-sm">
+      <p>© 2025 宠物日报 版权所有 | 京ICP备12345678号</p>
+    </div>
+  </div>
+</footer>
+
+<!-- 记录弹窗 (默认隐藏) -->
+<div id="recordModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+      <h3 class="text-xl font-bold">记录宠物日常</h3>
+      <button id="closeRecordModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <form id="recordForm">
+        <div class="mb-6">
+          <label for="recordTitle" class="block text-gray-700 font-medium mb-2">标题</label>
+          <input type="text" id="recordTitle" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="给您的记录起个标题吧">
+        </div>
+        
+        <div class="mb-6">
+          <label for="recordContent" class="block text-gray-700 font-medium mb-2">内容描述</label>
+          <textarea id="recordContent" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="描述一下宠物的状态和趣事吧..."></textarea>
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">添加媒体 (可选)</label>
+          <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors cursor-pointer">
+            <i class="fa fa-image text-4xl text-gray-400 mb-2"></i>
+            <p class="text-gray-500">点击上传图片或视频</p>
+            <input type="file" class="hidden" accept="image/*,video/*" multiple="">
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">添加标签</label>
+          <div class="flex flex-wrap gap-2 mb-3">
+            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm flex items-center">
+              玩耍 <button class="ml-1 text-primary/70 hover:text-primary">×</button>
+            </span>
+            <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm flex items-center">
+              进食 <button class="ml-1 text-primary/70 hover:text-primary">×</button>
+            </span>
+          </div>
+          <div class="flex">
+            <input type="text" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" placeholder="添加新标签">
+            <button type="button" class="bg-primary text-white px-4 py-2 rounded-r-lg hover:bg-primary/90 transition-colors">
+              添加
+            </button>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <label class="block text-gray-700 font-medium mb-2">添加表情</label>
+          <div class="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">😺</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">🐶</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">❤️</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">👍</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">🎉</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">😴</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">😎</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">🥰</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">😂</button>
+            <button type="button" class="text-2xl hover:scale-110 transition-transform">😍</button>
+          </div>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-100">
+          <button type="submit" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors">
+            保存记录
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 发布内容弹窗 (默认隐藏) -->
+<div id="postModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+      <h3 class="text-xl font-bold">发布到社区</h3>
+      <button id="closePostModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <form id="postForm">
+        <div class="flex items-center mb-6">
+          <img src="https://p3-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1818675597760397338~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=tTLUURO5wuK3QHee3eS0B7aMyNE%3D" alt="用户头像" class="w-12 h-12 rounded-full object-cover">
+          <div class="ml-3">
+            <p class="font-medium">您的昵称</p>
+            <p class="text-gray-500 text-sm">发布到宠物社区</p>
+          </div>
+        </div>
+        
+        <div class="mb-6">
+          <textarea rows="5" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all text-lg" placeholder="分享您的宠物故事..."></textarea>
+        </div>
+        
+        <div class="mb-6">
+          <div class="grid grid-cols-4 gap-2 mb-3">
+            <div class="aspect-square bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 hover:border-primary transition-colors cursor-pointer">
+              <i class="fa fa-image text-gray-400"></i>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <button type="button" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+              <i class="fa fa-image mr-2"></i>
+              <span>图片</span>
+            </button>
+            <button type="button" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+              <i class="fa fa-video-camera mr-2"></i>
+              <span>视频</span>
+            </button>
+            <button type="button" class="flex items-center text-gray-600 hover:text-primary transition-colors">
+              <i class="fa fa-smile-o mr-2"></i>
+              <span>表情</span>
+            </button>
+          </div>
+        </div>
+        
+        <div class="pt-4 border-t border-gray-100 flex justify-between">
+          <button type="button" class="text-gray-600 hover:text-gray-800 transition-colors">
+            草稿箱
+          </button>
+          <button type="submit" class="bg-primary text-white px-6 py-2 rounded-full font-semibold hover:bg-primary/90 transition-colors">
+            发布
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- 视频弹窗 (默认隐藏) -->
+<div id="videoModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4">
+  <div class="max-w-4xl w-full">
+    <div class="flex justify-end mb-4">
+      <button id="closeVideoModal" class="text-white hover:text-gray-300 transition-colors">
+        <i class="fa fa-times text-2xl"></i>
+      </button>
+    </div>
+    <div class="bg-black rounded-xl overflow-hidden">
+      <video id="modalVideo" class="w-full" controls="" poster="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/1977682794642407429~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=8Ycef88dWli6pZuOr4LQhmAewQc%3D">
+        <source src="#" type="video/mp4">
+        您的浏览器不支持视频播放
+      </video>
+    </div>
+  </div>
+</div>
+
+<!-- 定位演示弹窗 (默认隐藏) -->
+<div id="trackingDemoModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+    <div class="p-6 border-b border-gray-100 flex justify-between items-center sticky top-0 bg-white z-10">
+      <h3 class="text-xl font-bold">宠物定位演示</h3>
+      <button id="closeTrackingDemoModal" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <i class="fa fa-times text-xl"></i>
+      </button>
+    </div>
+    
+    <div class="p-6">
+      <div class="aspect-video bg-gray-100 rounded-lg overflow-hidden mb-6">
+        <img src="https://p26-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/2112766946347188233~tplv-be4g95zd3a-image.jpeg?rk3s=542c0f93&amp;x-expires=1776989573&amp;x-signature=gVYq4wvEeZXtWZI8I%2BB1j5G9gjM%3D" alt="追踪界面" class="w-full h-full object-cover">
+      </div>
+      
+      <div class="space-y-4">
+        <div>
+          <h4 class="font-bold mb-2">实时位置</h4>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex items-center">
+              <i class="fa fa-map-marker text-primary text-xl mr-3"></i>
+              <div>
+                <p class="font-medium">北京市朝阳区光华路soho附近</p>
+                <p class="text-gray-500 text-sm">更新时间: 刚刚</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-2">安全区域</h4>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center">
+                <i class="fa fa-shield text-green-500 text-xl mr-3"></i>
+                <div>
+                  <p class="font-medium">家</p>
+                  <p class="text-gray-500 text-sm">半径: 500米</p>
+                </div>
+              </div>
+              <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm">
+                宠物在安全区域内
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="font-bold mb-2">今日活动</h4>
+          <div class="bg-gray-50 p-4 rounded-lg">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-600">活动距离</span>
+              <span class="font-medium">2.5公里</span>
+            </div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-600">活动时长</span>
+              <span class="font-medium">1小时20分钟</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-gray-600">活跃指数</span>
+              <span class="font-medium">
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star text-yellow-400"></i>
+                <i class="fa fa-star-o text-yellow-400"></i>
+              </span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="pt-4">
+          <button id="viewHistoryBtn" class="w-full bg-primary text-white py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors flex items-center justify-center">
+            <i class="fa fa-history mr-2"></i>
+            查看历史轨迹
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  // 导航栏滚动效果
+  window.addEventListener('scroll', function() {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+      navbar.classList.add('py-2', 'shadow');
+      navbar.classList.remove('py-3');
+    } else {
+      navbar.classList.add('py-3');
+      navbar.classList.remove('py-2', 'shadow');
+    }
+  });
+  
+  // 移动端菜单切换
+  const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  
+  mobileMenuBtn.addEventListener('click', function() {
+    mobileMenu.classList.toggle('hidden');
+    if (mobileMenu.classList.contains('hidden')) {
+      mobileMenuBtn.innerHTML = '<i class="fa fa-bars"></i>';
+    } else {
+      mobileMenuBtn.innerHTML = '<i class="fa fa-times"></i>';
+    }
+  });
+  
+  // 用户菜单切换
+  const userMenuBtn = document.getElementById('userMenuBtn');
+  const userMenu = document.getElementById('userMenu');
+  
+  userMenuBtn.addEventListener('click', function() {
+    userMenu.classList.toggle('hidden');
+  });
+  
+  // 点击其他区域关闭用户菜单
+  document.addEventListener('click', function(event) {
+    if (!userMenuBtn.contains(event.target) && !userMenu.contains(event.target)) {
+      userMenu.classList.add('hidden');
+    }
+  });
+  
+  // 分析方式切换
+  const analysisTabs = document.querySelectorAll('.analysis-tab');
+  const analysisContents = document.querySelectorAll('.analysis-content');
+  
+  analysisTabs.forEach(tab => {
+    tab.addEventListener('click', function() {
+      // 移除所有标签的活跃状态
+      analysisTabs.forEach(t => {
+        t.classList.remove('text-primary', 'border-b-2', 'border-primary');
+        t.classList.add('text-gray-500', 'hover:text-gray-700');
+      });
+      
+      // 添加当前标签的活跃状态
+      this.classList.remove('text-gray-500', 'hover:text-gray-700');
+      this.classList.add('text-primary', 'border-b-2', 'border-primary');
+      
+      // 隐藏所有内容
+      analysisContents.forEach(content => {
+        content.classList.add('hidden');
+      });
+      
+      // 显示对应内容
+      const tabId = this.getAttribute('data-tab');
+      document.getElementById(`${tabId}-tab`).classList.remove('hidden');
+    });
+  });
+  
+  // 文件上传区域
+  const dropArea = document.getElementById('dropArea');
+  const fileInput = document.getElementById('fileInput');
+  const analyzeBtn = document.getElementById('analyzeBtn');
+  const analysisResult = document.getElementById('analysisResult');
+  
+  // 点击上传区域触发文件选择
+  dropArea.addEventListener('click', function() {
+    fileInput.click();
+  });
+  
+  // 文件选择变化
+  fileInput.addEventListener('change', function() {
+    if (this.files.length > 0) {
+      // 显示已选择的文件
+      dropArea.innerHTML = `
+        <i class="fa fa-check-circle text-4xl text-green-500 mb-4"></i>
+        <p class="text-gray-700 mb-2">已选择 ${this.files.length} 个文件</p>
+        <p class="text-gray-500 text-sm">${this.files[0].name} ${this.files.length > 1 ? `等 ${this.files.length} 个文件` : ''}</p>
+      `;
+      analyzeBtn.removeAttribute('disabled');
+    }
+  });
+  
+  // 拖放功能
+  dropArea.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    this.classList.add('border-primary');
+  });
+  
+  dropArea.addEventListener('dragleave', function() {
+    this.classList.remove('border-primary');
+  });
+  
+  dropArea.addEventListener('drop', function(e) {
+    e.preventDefault();
+    this.classList.remove('border-primary');
+    
+    if (e.dataTransfer.files.length > 0) {
+      // 显示已拖放的文件
+      dropArea.innerHTML = `
+        <i class="fa fa-check-circle text-4xl text-green-500 mb-4"></i>
+        <p class="text-gray-700 mb-2">已选择 ${e.dataTransfer.files.length} 个文件</p>
+        <p class="text-gray-500 text-sm">${e.dataTransfer.files[0].name} ${e.dataTransfer.files.length > 1 ? `等 ${e.dataTransfer.files.length} 个文件` : ''}</p>
+      `;
+      analyzeBtn.removeAttribute('disabled');
+    }
+  });
+  
+  // 分析按钮点击事件
+  analyzeBtn.addEventListener('click', function() {
+    // 显示加载状态
+    this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>分析中...';
+    this.disabled = true;
+    
+    // 模拟分析过程
+    setTimeout(() => {
+      // 显示分析结果
+      analysisResult.classList.remove('hidden');
+      // 重置按钮状态
+      this.innerHTML = '<i class="fa fa-bar-chart mr-2"></i>重新分析';
+      this.disabled = false;
+    }, 2000);
+  });
+  
+  // 相机功能
+  const startRecordVideo = document.getElementById('startRecordVideo');
+  const stopRecordVideo = document.getElementById('stopRecordVideo');
+  const cameraPreview = document.getElementById('cameraPreview');
+  
+  startRecordVideo.addEventListener('click', function() {
+    // 启动摄像头
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        cameraPreview.srcObject = stream;
+        // 切换按钮状态
+        this.disabled = true;
+        stopRecordVideo.disabled = false;
+        this.innerHTML = '<i class="fa fa-circle mr-1"></i>录制中...';
+        this.classList.remove('bg-primary');
+        this.classList.add('bg-gray-500');
+      })
+      .catch(err => {
+        console.error('无法访问摄像头: ', err);
+        alert('无法访问摄像头，请确保已授予权限');
+      });
+  });
+  
+  stopRecordVideo.addEventListener('click', function() {
+    // 停止摄像头
+    if (cameraPreview.srcObject) {
+      cameraPreview.srcObject.getTracks().forEach(track => track.stop());
+      cameraPreview.srcObject = null;
+    }
+    
+    // 切换按钮状态
+    this.disabled = true;
+    startRecordVideo.disabled = false;
+    startRecordVideo.innerHTML = '<i class="fa fa-circle mr-1"></i>开始录制';
+    startRecordVideo.classList.remove('bg-gray-500');
+    startRecordVideo.classList.add('bg-primary');
+    
+    // 显示分析按钮
+    analyzeBtn.removeAttribute('disabled');
+  });
+  
+  // 疾病详情切换
+  const diseaseDetailsBtns = document.querySelectorAll('.disease-details-btn');
+  
+  diseaseDetailsBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const details = this.closest('div').nextElementSibling;
+      details.classList.toggle('hidden');
+      
+      if (details.classList.contains('hidden')) {
+        this.innerHTML = '<i class="fa fa-plus-circle"></i>';
+      } else {
+        this.innerHTML = '<i class="fa fa-minus-circle"></i>';
+      }
+    });
+  });
+  
+  // 记录弹窗
+  const recordBtn = document.getElementById('recordBtn');
+  const startRecordBtn = document.getElementById('startRecordBtn');
+  const recordModal = document.getElementById('recordModal');
+  const closeRecordModal = document.getElementById('closeRecordModal');
+  const recordInteractBtns = document.querySelectorAll('.record-interact');
+  
+  function openRecordModal() {
+    recordModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeRecordModalFunc() {
+    recordModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  
+  recordBtn.addEventListener('click', openRecordModal);
+  startRecordBtn.addEventListener('click', openRecordModal);
+  closeRecordModal.addEventListener('click', closeRecordModalFunc);
+  
+  recordInteractBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const id = this.getAttribute('data-id');
+      // 根据不同的记录ID可以预设不同的内容
+      openRecordModal();
+    });
+  });
+  
+  // 点击弹窗外部关闭
+  recordModal.addEventListener('click', function(event) {
+    if (event.target === this) {
+      closeRecordModalFunc();
+    }
+  });
+  
+  // 发布内容弹窗
+  const createPostBtn = document.getElementById('createPostBtn');
+  const postModal = document.getElementById('postModal');
+  const closePostModal = document.getElementById('closePostModal');
+  
+  function openPostModal() {
+    postModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closePostModalFunc() {
+    postModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  
+  createPostBtn.addEventListener('click', openPostModal);
+  closePostModal.addEventListener('click', closePostModalFunc);
+  
+  postModal.addEventListener('click', function(event) {
+    if (event.target === this) {
+      closePostModalFunc();
+    }
+  });
+  
+  // 视频弹窗
+  const playVideoBtn = document.getElementById('playVideoBtn');
+  const videoModal = document.getElementById('videoModal');
+  const closeVideoModal = document.getElementById('closeVideoModal');
+  const modalVideo = document.getElementById('modalVideo');
+  
+  function openVideoModal() {
+    videoModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    // 这里可以设置实际视频URL
+    // modalVideo.src = "video-url.mp4";
+    // modalVideo.play();
+  }
+  
+  function closeVideoModalFunc() {
+    videoModal.classList.add('hidden');
+    document.body.style.overflow = '';
+    // modalVideo.pause();
+    // modalVideo.src = "";
+  }
+  
+  playVideoBtn.addEventListener('click', openVideoModal);
+  closeVideoModal.addEventListener('click', closeVideoModalFunc);
+  
+  videoModal.addEventListener('click', function(event) {
+    if (event.target === this) {
+      closeVideoModalFunc();
+    }
+  });
+  
+  // 定位演示弹窗
+  const viewTrackingDemoBtn = document.getElementById('viewTrackingDemoBtn');
+  const tryDemoBtn = document.getElementById('tryDemoBtn');
+  const trackingDemoModal = document.getElementById('trackingDemoModal');
+  const closeTrackingDemoModal = document.getElementById('closeTrackingDemoModal');
+  const viewHistoryBtn = document.getElementById('viewHistoryBtn');
+  
+  function openTrackingDemoModal() {
+    trackingDemoModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function closeTrackingDemoModalFunc() {
+    trackingDemoModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  
+  viewTrackingDemoBtn.addEventListener('click', openTrackingDemoModal);
+  tryDemoBtn.addEventListener('click', openTrackingDemoModal);
+  closeTrackingDemoModal.addEventListener('click', closeTrackingDemoModalFunc);
+  
+  trackingDemoModal.addEventListener('click', function(event) {
+    if (event.target === this) {
+      closeTrackingDemoModalFunc();
+    }
+  });
+  
+  viewHistoryBtn.addEventListener('click', function() {
+    alert('历史轨迹功能正在开发中，敬请期待！');
+  });
+  
+  // 查找医院按钮
+  const findHospitalBtn = document.getElementById('findHospitalBtn');
+  const locationSection = document.getElementById('locationSection');
+  const locateBtn = document.getElementById('locateBtn');
+  const mapLoading = document.getElementById('mapLoading');
+  
+  findHospitalBtn.addEventListener('click', function() {
+    locationSection.classList.remove('hidden');
+    // 滚动到定位板块
+    locationSection.scrollIntoView({ behavior: 'smooth' });
+    
+    // 模拟定位加载
+    mapLoading.classList.remove('hidden');
+    setTimeout(() => {
+      mapLoading.classList.add('hidden');
+    }, 1500);
+  });
+  
+  locateBtn.addEventListener('click', function() {
+    // 模拟重新定位
+    mapLoading.classList.remove('hidden');
+    setTimeout(() => {
+      mapLoading.classList.add('hidden');
+      alert('已更新到您的当前位置');
+    }, 1500);
+  });
+  
+  // 距离筛选按钮
+  const distanceFilters = document.querySelectorAll('.distance-filter');
+  
+  distanceFilters.forEach(filter => {
+    filter.addEventListener('click', function() {
+      // 移除所有按钮的活跃状态
+      distanceFilters.forEach(f => {
+        f.classList.remove('bg-primary', 'text-white');
+        f.classList.add('bg-white', 'text-gray-700', 'border', 'border-gray-200', 'hover:bg-gray-50');
+      });
+      
+      // 添加当前按钮的活跃状态
+      this.classList.remove('bg-white', 'text-gray-700', 'border', 'border-gray-200', 'hover:bg-gray-50');
+      this.classList.add('bg-primary', 'text-white');
+      
+      // 模拟筛选结果
+      const distance = this.textContent;
+      alert(`已筛选${distance}的宠物医院`);
+    });
+  });
+  
+  // 医院列表项点击事件
+  const hospitalItems = document.querySelectorAll('.hospital-item');
+  
+  hospitalItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const hospitalName = this.querySelector('h4').textContent;
+      alert(`您选择了"${hospitalName}"，即将为您导航...`);
+    });
+  });
+  
+  // 购买定位器按钮
+  const buyTrackerBtn = document.getElementById('buyTrackerBtn');
+  const buyNowBtn = document.getElementById('buyNowBtn');
+  
+  buyTrackerBtn.addEventListener('click', function() {
+    alert('宠物定位器产品页面即将上线，敬请期待！');
+  });
+  
+  buyNowBtn.addEventListener('click', function() {
+    alert('购买功能即将上线，敬请期待！');
+  });
+  
+  // 社区筛选按钮
+  const communityFilters = document.querySelectorAll('.community-filter');
+  
+  communityFilters.forEach(filter => {
+    filter.addEventListener('click', function() {
+      // 移除所有按钮的活跃状态
+      communityFilters.forEach(f => {
+        f.classList.remove('bg-primary', 'text-white');
+        f.classList.add('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+      });
+      
+      // 添加当前按钮的活跃状态
+      this.classList.remove('bg-white', 'text-gray-700', 'hover:bg-gray-100');
+      this.classList.add('bg-primary', 'text-white');
+      
+      // 模拟筛选结果
+      const filterType = this.textContent;
+      alert(`已切换到${filterType}帖子`);
+    });
+  });
+  
+  // 知识标签点击事件
+  const tipTags = document.querySelectorAll('.tip-tag');
+  
+  tipTags.forEach(tag => {
+    tag.addEventListener('click', function() {
+      // 移除所有标签的活跃状态
+      tipTags.forEach(t => {
+        t.classList.remove('bg-primary', 'text-white');
+        t.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+      });
+      
+      // 添加当前标签的活跃状态
+      this.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+      this.classList.add('bg-primary', 'text-white');
+      
+      // 模拟筛选结果
+      const tagType = this.textContent;
+      alert(`已筛选${tagType}相关的宠物知识`);
+    });
+  });
+  
+  // 加载更多按钮
+  const loadMoreBtn = document.getElementById('loadMoreBtn');
+  
+  loadMoreBtn.addEventListener('click', function() {
+    this.innerHTML = '<i class="fa fa-spinner fa-spin mr-2"></i>加载中...';
+    this.disabled = true;
+    
+    // 模拟加载更多
+    setTimeout(() => {
+      this.innerHTML = '加载更多记录 <i class="fa fa-refresh ml-2"></i>';
+      this.disabled = false;
+      alert('已加载全部记录');
+    }, 1500);
+  });
+  
+  // 表单提交处理
+  const recordForm = document.getElementById('recordForm');
+  const postForm = document.getElementById('postForm');
+  
+  recordForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // 模拟提交成功
+    alert('记录保存成功！');
+    closeRecordModalFunc();
+  });
+  
+  postForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    // 模拟提交成功
+    alert('发布成功！');
+    closePostModalFunc();
+  });
+</script>
+
+
+</body></html>
