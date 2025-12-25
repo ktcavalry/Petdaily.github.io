@@ -1,1 +1,1 @@
-# Petdaily.github.io
+# petstar.github.io
