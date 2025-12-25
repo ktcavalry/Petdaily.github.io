@@ -1,1 +1,1 @@
-# petstar.github.io
+# petstars.github.io
